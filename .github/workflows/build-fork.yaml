@@ -1,0 +1,77 @@
+name: Build APK
+
+on:
+  push:
+    branches: ["**"]
+    paths-ignore: ["**.md", "fastlane/**"]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      variant:
+        description: "Gradle variant to assemble"
+        type: choice
+        default: githubRelease
+        options: [githubRelease, githubDebug]
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # build.gradle.kts reads the git commit hash for the APK name
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+
+      # Optional release signing. Without these secrets the build falls back to
+      # the debug keystore committed in signature/, which is enough for sideloading.
+      - name: Decode release keystore
+        if: ${{ env.KEYSTORE_B64 != '' }}
+        env:
+          KEYSTORE_B64: ${{ secrets.KEYSTORE_B64 }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+        run: |
+          echo "$KEYSTORE_B64" | base64 -d > signature/release.keystore
+          cat > signature/keystore_release.properties <<EOF
+          keyAlias=$KEY_ALIAS
+          keyPassword=$KEY_PASSWORD
+          storeFile=../signature/release.keystore
+          storePassword=$STORE_PASSWORD
+          EOF
+
+      - name: Assemble
+        run: ./gradlew assemble${{ inputs.variant || 'githubRelease' }} --stacktrace
+
+      - name: Lint & unit tests
+        run: ./gradlew testGithubReleaseUnitTest lintGithubRelease --continue
+        continue-on-error: true
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ReadYou-${{ github.ref_name }}-${{ github.sha }}
+          path: app/build/outputs/apk/github/*/*.apk
+          if-no-files-found: error
+          retention-days: 30
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reports-${{ github.sha }}
+          path: |
+            app/build/reports/**
+          if-no-files-found: ignore
+          retention-days: 7
