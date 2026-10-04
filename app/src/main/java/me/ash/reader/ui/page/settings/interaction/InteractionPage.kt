@@ -29,6 +29,8 @@ import me.ash.reader.infrastructure.preference.LocalHideEmptyGroups
 import me.ash.reader.infrastructure.preference.LocalInitialFilter
 import me.ash.reader.infrastructure.preference.LocalInitialPage
 import me.ash.reader.infrastructure.preference.LocalMarkAsReadOnScroll
+import me.ash.reader.infrastructure.preference.LocalNotificationBadge
+import me.ash.reader.infrastructure.preference.LocalNotificationSummary
 import me.ash.reader.infrastructure.preference.LocalOpenLink
 import me.ash.reader.infrastructure.preference.LocalOpenLinkSpecificBrowser
 import me.ash.reader.infrastructure.preference.LocalPullToSwitchArticle
@@ -68,6 +70,8 @@ fun InteractionPage(
     val openLink = LocalOpenLink.current
     val openLinkSpecificBrowser = LocalOpenLinkSpecificBrowser.current
     val sharedContent = LocalSharedContent.current
+    val notificationSummary = LocalNotificationSummary.current
+    val notificationBadge = LocalNotificationBadge.current
     val settings = LocalSettings.current
     val pullToSwitchFeed = settings.pullToSwitchFeed
 
@@ -235,6 +239,37 @@ fun InteractionPage(
                             sharedContentDialogVisible = true
                         },
                     ) {}
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Subtitle(
+                        modifier = Modifier.padding(horizontal = 24.dp),
+                        text = stringResource(R.string.notifications),
+                    )
+                    SettingItem(
+                        title = stringResource(R.string.notification_summary),
+                        desc = stringResource(R.string.notification_summary_desc),
+                        onClick = {
+                            notificationSummary.toggle(context, scope)
+                        },
+                    ) {
+                        RYSwitch(activated = notificationSummary.value) {
+                            notificationSummary.toggle(context, scope)
+                        }
+                    }
+                    SettingItem(
+                        title = stringResource(R.string.notification_badge),
+                        desc = stringResource(R.string.notification_badge_desc),
+                        enabled = notificationSummary.value,
+                        onClick = {
+                            notificationBadge.toggle(context, scope)
+                        },
+                    ) {
+                        RYSwitch(
+                            activated = notificationBadge.value && notificationSummary.value
+                        ) {
+                            notificationBadge.toggle(context, scope)
+                        }
+                    }
                     Spacer(modifier = Modifier.height(24.dp))
                 }
                 item {

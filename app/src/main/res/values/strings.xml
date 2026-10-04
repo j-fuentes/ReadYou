@@ -386,4 +386,19 @@
     <string name="parse_full_content_desc">Fetch full articles from webpages</string>
     <string name="enable">Enable</string>
     <string name="disable">Disable</string>
+
+    <!-- Notification -->
+    <string name="notification_summary">Single summary notification</string>
+    <string name="notification_summary_desc">Group all new articles of a sync into one notification</string>
+    <string name="notification_badge">Home icon badge</string>
+    <string name="notification_badge_desc">Show the number of new articles on the launcher icon</string>
+    <string name="notification_summary_more">and %1$d more</string>
+    <plurals name="notification_summary_title">
+        <item quantity="one">%1$d new article</item>
+        <item quantity="other">%1$d new articles</item>
+    </plurals>
+    <plurals name="notification_summary_feeds">
+        <item quantity="one">In %1$d feed</item>
+        <item quantity="other">In %1$d feeds</item>
+    </plurals>
 </resources>

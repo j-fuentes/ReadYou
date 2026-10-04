@@ -197,6 +197,8 @@ sealed interface PreferencesKey {
         const val openLink = "openLink"
         const val openLinkAppSpecificBrowser = "openLinkAppSpecificBrowser"
         const val sharedContent = "sharedContent"
+        const val notificationSummary = "notificationSummary"
+        const val notificationBadge = "notificationBadge"
 
         // Languages
         const val languages = "languages"
@@ -273,6 +275,8 @@ sealed interface PreferencesKey {
                 IntKey(openLink),
                 StringKey(openLinkAppSpecificBrowser),
                 IntKey(sharedContent),
+                BooleanKey(notificationSummary),
+                BooleanKey(notificationBadge),
                 // Languages
                 IntKey(languages),
             )
@@ -359,6 +363,8 @@ data class DataStoreKey<T>(val key: Preferences.Key<T>, val type: Class<T>) {
         const val openLink = "openLink"
         const val openLinkAppSpecificBrowser = "openLinkAppSpecificBrowser"
         const val sharedContent = "sharedContent"
+        const val notificationSummary = "notificationSummary"
+        const val notificationBadge = "notificationBadge"
 
         // Languages
         const val languages = "languages"
@@ -511,6 +517,10 @@ data class DataStoreKey<T>(val key: Preferences.Key<T>, val type: Class<T>) {
                         String::class.java,
                     ),
                 sharedContent to DataStoreKey(intPreferencesKey(sharedContent), Int::class.java),
+                notificationSummary to
+                    DataStoreKey(booleanPreferencesKey(notificationSummary), Boolean::class.java),
+                notificationBadge to
+                    DataStoreKey(booleanPreferencesKey(notificationBadge), Boolean::class.java),
                 // Languages
                 languages to DataStoreKey(intPreferencesKey(languages), Int::class.java),
             )

@@ -138,6 +138,10 @@ class SettingsProvider @Inject constructor(
             LocalOpenLinkSpecificBrowser provides settings.openLinkSpecificBrowser,
             LocalSharedContent provides settings.sharedContent,
 
+            // Notification
+            LocalNotificationSummary provides settings.notificationSummary,
+            LocalNotificationBadge provides settings.notificationBadge,
+
             // Languages
             LocalLanguages provides settings.languages,
         ) {

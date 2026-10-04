@@ -80,6 +80,10 @@ data class Settings(
     val openLinkSpecificBrowser: OpenLinkSpecificBrowserPreference = OpenLinkSpecificBrowserPreference.default,
     val sharedContent: SharedContentPreference = SharedContentPreference.default,
 
+    // Notification
+    val notificationSummary: NotificationSummaryPreference = NotificationSummaryPreference.default,
+    val notificationBadge: NotificationBadgePreference = NotificationBadgePreference.default,
+
     // Languages
     val languages: LanguagesPreference = LanguagesPreference.default,
 )
