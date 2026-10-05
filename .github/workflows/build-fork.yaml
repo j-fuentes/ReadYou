@@ -53,6 +53,10 @@ jobs:
           storePassword=$STORE_PASSWORD
           EOF
 
+      - name: Slug branch name
+        id: slug
+        run: echo "name=${GITHUB_REF_NAME//\//-}" >> "$GITHUB_OUTPUT"
+
       - name: Assemble
         run: ./gradlew assemble${{ inputs.variant || 'githubRelease' }} --stacktrace
 
@@ -62,7 +66,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: ReadYou-${{ github.ref_name }}-${{ github.sha }}
+          name: ReadYou-${{ steps.slug.outputs.name }}-${{ github.sha }}
           path: app/build/outputs/apk/github/*/*.apk
           if-no-files-found: error
           retention-days: 30
