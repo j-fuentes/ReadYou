@@ -87,6 +87,10 @@ fun Preferences.toSettings(): Settings {
         openLinkSpecificBrowser = OpenLinkSpecificBrowserPreference.fromPreferences(this),
         sharedContent = SharedContentPreference.fromPreferences(this),
 
+        // Notification
+        notificationSummary = NotificationSummaryPreference.fromPreferences(this),
+        notificationBadge = NotificationBadgePreference.fromPreferences(this),
+
         // Languages
         languages = LanguagesPreference.fromPreferences(this),
     )

@@ -7,6 +7,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import java.util.concurrent.TimeUnit
 import me.ash.reader.domain.model.account.Account
+import me.ash.reader.infrastructure.android.NotificationHelper
 import me.ash.reader.infrastructure.rss.ReaderCacheHelper
 
 @HiltWorker
@@ -18,6 +19,7 @@ constructor(
     private val rssService: RssService,
     private val readerCacheHelper: ReaderCacheHelper,
     private val workManager: WorkManager,
+    private val notificationHelper: NotificationHelper,
 ) : CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
@@ -31,6 +33,8 @@ constructor(
             .get()
             .sync(accountId = accountId, feedId = feedId, groupId = groupId)
             .also {
+                // Post a single notification summarizing every new article of this sync.
+                notificationHelper.flushSummary()
                 rssService.get().clearKeepArchivedArticles().forEach {
                     readerCacheHelper.deleteCacheFor(articleId = it.id)
                 }
